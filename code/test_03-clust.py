@@ -1,9 +1,10 @@
 import os.path as osp
+from sklearn.cluster import KMeans
 
 import torch
 import torch.nn.functional as F
 from torch_geometric.datasets import DBLP
-from torch_geometric.nn import SAGEConv, HeteroConv, Linear
+from torch_geometric.nn import GCNConv, GATConv, SAGEConv, HeteroConv, Linear
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '/mnt/c/temp/working/data/DBLP/')
 dataset = DBLP(path)
@@ -24,6 +25,11 @@ class HeteroGNN(torch.nn.Module):
                 edge_type: SAGEConv((-1, -1), hidden_channels)
                 for edge_type in metadata[1]
             })
+            # conv = HeteroConv({
+            #     ('paper', 'cites', 'paper'): GCNConv(-1, hidden_channels),
+            #     ('author', 'writes', 'paper'): GATConv((-1, -1), hidden_channels),
+            #     ('author', 'affiliated_with', 'institution'): SAGEConv((-1, -1), hidden_channels)
+            # }, aggr='sum')
             self.convs.append(conv)
 
         self.lin = Linear(hidden_channels, out_channels)
@@ -45,15 +51,32 @@ with torch.no_grad():  # Initialize lazy modules.
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=0.001)
 
+def clustering(X,K):
+
+    return
 
 def train():
     model.train()
+    mask = data['author'].test_mask
+
+# خوشه‌بندی بر اساس 
+# x in data.x_dict.items()
+    # X = data.x_dict['author'].numpy()
+    # X = X[mask]
+    # K = 5
+    # k_means = KMeans(n_clusters=K, random_state=0).fit(X)
+
+    # for k in range(K):
+    # k_means.labels_
+    # انطباق اندیسها
+
+
     optimizer.zero_grad()
     out = model(data.x_dict, data.edge_index_dict)
-    mask = data['author'].train_mask
     loss = F.cross_entropy(out[mask], data['author'].y[mask])
     loss.backward()
     optimizer.step()
+
     return float(loss)
 
 
@@ -63,14 +86,14 @@ def test():
     pred = model(data.x_dict, data.edge_index_dict).argmax(dim=-1)
 
     accs = []
-    for split in ['train_mask', 'val_mask', 'test_mask']:
+    for split in ['test_mask', 'val_mask', 'train_mask']:
         mask = data['author'][split]
         acc = (pred[mask] == data['author'].y[mask]).sum() / mask.sum()
         accs.append(float(acc))
     return accs
 
 
-for epoch in range(1, 10):
+for epoch in range(1, 16):
     loss = train()
     train_acc, val_acc, test_acc = test()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
