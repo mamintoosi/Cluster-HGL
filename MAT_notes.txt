@@ -1,0 +1,42 @@
+HeteroData(
+  paper={
+    x=[736389, 128],
+    y=[736389],
+    train_mask=[736389],
+    val_mask=[736389],
+    test_mask=[736389]
+  },
+  author={ x=[1134649, 128] },
+  institution={ x=[8740, 128] },
+  field_of_study={ x=[59965, 128] },
+  (author, affiliated_with, institution)={ edge_index=[2, 1043998] },
+  (author, writes, paper)={ edge_index=[2, 7145660] },
+  (paper, cites, paper)={ edge_index=[2, 10792672] },
+  (paper, has_topic, field_of_study)={ edge_index=[2, 7505078] },
+  (institution, rev_affiliated_with, author)={ edge_index=[2, 1043998] },
+  (paper, rev_writes, author)={ edge_index=[2, 7145660] },
+  (field_of_study, rev_has_topic, paper)={ edge_index=[2, 7505078] }
+)
+
+HeteroData(
+  author={
+    x=[79, 334],
+    y=[79],
+    train_mask=[79],
+    val_mask=[79],
+    test_mask=[79],
+    batch_size=32
+  },
+  paper={ x=[106, 4231] },
+  term={ x=[374, 50] },
+  conference={
+    num_nodes=15,
+    x=[15, 1]
+  },
+  (author, to, paper)={ edge_index=[2, 189] },
+  (paper, to, author)={ edge_index=[2, 106] },
+  (paper, to, term)={ edge_index=[2, 0] },
+  (paper, to, conference)={ edge_index=[2, 0] },
+  (term, to, paper)={ edge_index=[2, 627] },
+  (conference, to, paper)={ edge_index=[2, 106] }
+)
