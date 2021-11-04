@@ -40,3 +40,7 @@ HeteroData(
   (term, to, paper)={ edge_index=[2, 627] },
   (conference, to, paper)={ edge_index=[2, 106] }
 )
+
+مجلات احتمالی
+https://www.sciencedirect.com/journal/engineering-science-and-technology-an-international-journal
+https://www.sciencedirect.com/journal/information-processing-and-management
